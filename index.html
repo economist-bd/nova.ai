@@ -94,11 +94,11 @@
   <div class="container">
     <h1>Nova - AI Chatbot</h1>
     <div class="chatbox" id="chatbox">
-      <div class="message">👋 Welcome! Ask me anything.</div>
+      <div class="message">👋 স্বাগত! কিছু জিজ্ঞাসা করুন।</div>
     </div>
     <form id="chatForm" class="chat-input-row" autocomplete="off">
-      <input type="text" id="chatInput" placeholder="Type your message…" required>
-      <button type="submit">Send</button>
+      <input type="text" id="chatInput" placeholder="আপনার বার্তা টাইপ করুন…" required>
+      <button type="submit">পাঠান</button>
     </form>
   </div>
   <script>
@@ -106,34 +106,44 @@
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
 
-    function appendMessage(msg, sender='user') {
+    function appendMessage(msg, sender = 'bot') {
       const div = document.createElement('div');
-      div.className = 'message ' + sender;
+      div.className = `message ${sender}`;
       div.textContent = msg;
       chatbox.appendChild(div);
       chatbox.scrollTop = chatbox.scrollHeight;
     }
 
-    chatForm.addEventListener('submit', function(e) {
+    chatForm.addEventListener('submit', async function(e) {
       e.preventDefault();
-      const userMsg = chatInput.value.trim();
-      if (userMsg) {
-        appendMessage(userMsg, 'user');
-        chatInput.value = '';
-        setTimeout(() => {
-          // Simulated AI response
-          appendMessage('🤖 ' + generateReply(userMsg), '');
-        }, 700);
+      const userMessage = chatInput.value.trim();
+      if (userMessage === '') return;
+
+      appendMessage(userMessage, 'user');
+      chatInput.value = '';
+
+      try {
+        const response = await fetch('http://localhost:3000/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ message: userMessage }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok.');
+        }
+
+        const data = await response.json();
+        const botMessage = data.response;
+        appendMessage(botMessage, 'bot');
+
+      } catch (error) {
+        console.error('Error:', error);
+        appendMessage('Sorry, something went wrong. Please try again.', 'bot');
       }
     });
-
-    function generateReply(msg) {
-      // Simple simulated responses
-      if (/hello|hi|hey|হ্যালো|নমস্কার/i.test(msg)) return "Hello! How can I help you today?";
-      if (/your name|who are you|তোমার নাম|তুমি কে/i.test(msg)) return "I'm Nova, your AI assistant.";
-      if (/help|সহায়তা/i.test(msg)) return "Ask me anything—you can try asking about images, text, or more!";
-      return "Thanks for your message! I'll get back to you soon.";
-    }
   </script>
 </body>
 </html>
