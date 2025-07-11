@@ -88,9 +88,43 @@
         font-size: 0.98rem;
       }
     }
+    .animated-text {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #2364b3;
+      text-align: center;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      border-right: .15em solid #2364b3;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 0;
+      animation: typing 3.5s steps(44, end) forwards, blink-caret .75s step-end infinite;
+    }
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: #2364b3 }
+    }
   </style>
 </head>
 <body>
+  <div class="animated-text">
+    Md. Monjurul Haque, Lecturer of Economics,<br>Jiauddin School And College
+  </div>
+  <div class="container">
+    <h1>Nova - AI Chatbot</h1>
+    <div class="chatbox" id="chatbox">
+      <div class="message">👋 স্বাগত! কিছু জিজ্ঞাসা করুন।</div>
+    </div>
+    <form id="chatForm" class="chat-input-row" autocomplete="off">
+      <input type="text" id="chatInput" placeholder="আপনার বার্তা টাইপ করুন…" required>
+      <button type="submit">পাঠান</button>
+    </form>
+  </div>
   <div class="container">
     <h1>Nova - AI Chatbot</h1>
     <div class="chatbox" id="chatbox">
