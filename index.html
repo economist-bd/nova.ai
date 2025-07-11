@@ -94,11 +94,11 @@
   <div class="container">
     <h1>Nova - AI Chatbot</h1>
     <div class="chatbox" id="chatbox">
-      <div class="message">👋 Welcome! Ask me anything.</div>
+      <div class="message">👋 স্বাগত! কিছু জিজ্ঞাসা করুন।</div>
     </div>
     <form id="chatForm" class="chat-input-row" autocomplete="off">
-      <input type="text" id="chatInput" placeholder="Type your message…" required>
-      <button type="submit">Send</button>
+      <input type="text" id="chatInput" placeholder="আপনার বার্তা টাইপ করুন…" required>
+      <button type="submit">পাঠান</button>
     </form>
   </div>
   <script>
@@ -106,34 +106,65 @@
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
 
-    function appendMessage(msg, sender='user') {
+    /**
+     * Appends a new message to the chatbox.
+     * @param {string} msg - The message text to append.
+     * @param {string} sender - The sender of the message ('user' or 'bot').
+     */
+    function appendMessage(msg, sender = 'bot') {
       const div = document.createElement('div');
-      div.className = 'message ' + sender;
-      div.textContent = msg;
+      // Add 'message' and sender-specific class (e.g., 'user')
+      div.className = `message ${sender}`; 
+      div.textContent = msg; // Use textContent for security
       chatbox.appendChild(div);
+      // Automatically scroll to the newest message
       chatbox.scrollTop = chatbox.scrollHeight;
     }
 
-    chatForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const userMsg = chatInput.value.trim();
-      if (userMsg) {
-        appendMessage(userMsg, 'user');
-        chatInput.value = '';
-        setTimeout(() => {
-          // Simulated AI response
-          appendMessage('🤖 ' + generateReply(userMsg), '');
-        }, 700);
-      }
-    });
+    /**
+     * Generates a response from the bot based on user input.
+     * @param {string} userInput - The text entered by the user.
+     * @returns {string} The bot's response message.
+     */
+    function getBotResponse(userInput) {
+        const input = userInput.toLowerCase().trim();
 
-    function generateReply(msg) {
-      // Simple simulated responses
-      if (/hello|hi|hey|হ্যালো|নমস্কার/i.test(msg)) return "Hello! How can I help you today?";
-      if (/your name|who are you|তোমার নাম|তুমি কে/i.test(msg)) return "I'm Nova, your AI assistant.";
-      if (/help|সহায়তা/i.test(msg)) return "Ask me anything—you can try asking about images, text, or more!";
-      return "Thanks for your message! I'll get back to you soon.";
+        // Simple keyword-based responses
+        if (input.includes("কেমন আছো")) {
+            return "আমি ভালো আছি, ধন্যবাদ! আপনার কি খবর?";
+        } else if (input.includes("তোমার নাম কি")) {
+            return "আমার নাম নোভা (Nova), আমি একটি এআই চ্যাটবট।";
+        } else if (input.includes("ধন্যবাদ")) {
+            return "আপনাকে স্বাগতম!";
+        } else if (input.includes("হাই") || input.includes("হ্যালো")) {
+            return "হ্যালো! আমি আপনাকে কিভাবে সাহায্য করতে পারি?";
+        } else if (input.includes("বিদায়")) {
+            return "আবার কথা হবে, বিদায়!";
+        } else {
+            return "দুঃখিত, আমি আপনার কথা বুঝতে পারিনি। আপনি অন্যভাবে জিজ্ঞাসা করতে পারেন?";
+        }
     }
+
+    // Event listener for form submission
+    chatForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // Prevent the form from reloading the page
+      
+      const userMessage = chatInput.value.trim();
+      if (userMessage === '') {
+        return; // Do nothing if the input is empty
+      }
+
+      // Display the user's message
+      appendMessage(userMessage, 'user');
+      // Clear the input field
+      chatInput.value = '';
+
+      // Simulate bot thinking and then respond
+      setTimeout(() => {
+        const botMessage = getBotResponse(userMessage);
+        appendMessage(botMessage, 'bot');
+      }, 600); // 600ms delay for a more realistic feel
+    });
   </script>
 </body>
 </html>
